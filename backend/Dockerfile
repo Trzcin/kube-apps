@@ -6,4 +6,4 @@ EXPOSE 80
 
 RUN npm ci
 
-CMD [ "npm" "run" "start" ]
+CMD ["npm", "run", "start"]
