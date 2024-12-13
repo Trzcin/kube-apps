@@ -1,6 +1,14 @@
 FROM nginx:alpine
 
-COPY . /usr/share/nginx/html/
+COPY . . 
+
+RUN apk add --update nodejs npm
+
+RUN npm ci
+
+RUN npm run build
+
+RUN cp -r build/* /usr/share/nginx/html/
 
 EXPOSE 80
 
