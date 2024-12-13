@@ -6,7 +6,7 @@
 
 	let todos: Todo[] = $state([]);
 	onMount(async () => {
-		const res = await fetch(`${baseApiUrl}/api/todos`);
+		const res = await fetch(`${baseApiUrl}api/todos`);
 		todos = await res.json();
 	});
 </script>

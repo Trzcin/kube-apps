@@ -4,6 +4,8 @@ COPY . .
 
 RUN apk add --update nodejs npm
 
+ENV VITE_API_URL=/
+
 RUN npm ci
 
 RUN npm run build
