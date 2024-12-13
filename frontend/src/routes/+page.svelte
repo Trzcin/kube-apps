@@ -1,11 +1,14 @@
 <script lang="ts">
+	import { baseApiUrl } from '$lib/api';
 	import AddTodo from '$lib/components/AddTodo.svelte';
 	import TodoItem from '$lib/components/TodoItem.svelte';
+	import { onMount } from 'svelte';
 
-	const todos: Todo[] = $state([
-		{ id: crypto.randomUUID(), text: 'todo item 1' },
-		{ id: crypto.randomUUID(), text: 'todo item 2' }
-	]);
+	let todos: Todo[] = $state([]);
+	onMount(async () => {
+		const res = await fetch(`${baseApiUrl}/api/todos`);
+		todos = await res.json();
+	});
 </script>
 
 <main class="flex h-screen flex-col items-center pt-16">
