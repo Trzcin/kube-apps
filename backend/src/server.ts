@@ -17,5 +17,5 @@ apiRouter.get("/todos", (_, res) => {
 });
 
 app.use("/api", apiRouter);
-const port = process.env.PORT ?? 80;
+const port = process.env.PORT ?? 5000;
 app.listen(port, () => console.log(`Server listening on port ${port}`));
