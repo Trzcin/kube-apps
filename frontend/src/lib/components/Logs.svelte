@@ -10,8 +10,8 @@
 <Pill {label}>
 	<ul>
 		{#each $requestLogs as log}
-			<li class="flex items-center gap-2">
-				<span class="font-mono font-semibold">{log.date.toLocaleTimeString('pl-PL')}</span><span
+			<li class="flex items-center gap-2 font-mono">
+				<span class="font-semibold">{log.date.toLocaleTimeString('pl-PL')}</span><span
 					>{log.msg}</span
 				>
 			</li>

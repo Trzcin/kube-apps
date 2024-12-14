@@ -20,8 +20,9 @@
 			const start = performance.now();
 			const res = await fetch(`${baseApiUrl}api/todos?userId=${$userId}`);
 			if (!res.ok) throw `Status ${res.status} ${res.statusText}`;
-			todos = await res.json();
-			logRequest(`RESPONSE GET todos in ${performance.now() - start} ms`);
+			const data = await res.json();
+			logRequest(`RESPONSE GET todos in ${performance.now() - start} ms from ${data.src}`);
+			todos = data.todos;
 		} catch (error) {
 			logRequest(`ERROR GET todos ${error}`);
 			console.error(error);

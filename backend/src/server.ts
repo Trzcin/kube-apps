@@ -36,7 +36,7 @@ apiRouter.get("/todos", async (req, res) => {
 
     const todos = await cache.getTodos(userId);
     if (todos != null) {
-        res.json(todos);
+        res.json({ todos, src: "Redis" });
         return;
     }
 
@@ -46,7 +46,7 @@ apiRouter.get("/todos", async (req, res) => {
             [userId]
         );
         await cache.updateTodos(userId, () => result.rows);
-        res.json(result.rows);
+        res.json({ todos: result.rows, src: "PostgreSQL" });
     } catch (error) {
         res.status(500).send(`Server error: ${error}`);
     }
