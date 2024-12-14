@@ -82,6 +82,15 @@ apiRouter.patch("/todo/:id", async (req, res) => {
     }
 });
 
+apiRouter.delete("/todo/:id", async (req, res) => {
+    try {
+        await db.query<Todo>("DELETE FROM todo WHERE id = $1", [req.params.id]);
+        res.status(204).end();
+    } catch (error) {
+        res.status(500).send(`Server error: ${error}`);
+    }
+});
+
 apiRouter.ws("/ws", (ws) => {
     ws.on("message", (data) => {
         const msg = data.toString();

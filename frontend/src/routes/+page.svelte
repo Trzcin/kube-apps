@@ -35,6 +35,13 @@
 			headers: jsonHeaders
 		});
 	}
+
+	async function deleteTodo(todo: Todo) {
+		const res = await fetch(`${baseApiUrl}api/todo/${todo.id}`, { method: 'DELETE' });
+		if (res.ok) {
+			todos = todos.filter((t) => t.id !== todo.id);
+		}
+	}
 </script>
 
 <main class="flex h-screen flex-col items-center pt-16">
@@ -47,6 +54,7 @@
 					todo.checked = v;
 					checkTodo(todo);
 				}}
+				ondelete={() => deleteTodo(todo)}
 			/>
 		{/each}
 	</ul>
