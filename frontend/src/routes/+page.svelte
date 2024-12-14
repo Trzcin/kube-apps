@@ -17,11 +17,11 @@
 
 		try {
 			logRequest('REQUEST GET todos');
-			const start = performance.now();
+			const start = Date.now();
 			const res = await fetch(`${baseApiUrl}api/todos?userId=${$userId}`);
 			if (!res.ok) throw `Status ${res.status} ${res.statusText}`;
 			const data = await res.json();
-			logRequest(`RESPONSE GET todos in ${performance.now() - start} ms from ${data.src}`);
+			logRequest(`RESPONSE GET todos in ${Date.now() - start} ms from ${data.src}`);
 			todos = data.todos;
 		} catch (error) {
 			logRequest(`ERROR GET todos ${error}`);
@@ -32,7 +32,7 @@
 	async function addTodo(todo: TodoPost) {
 		try {
 			logRequest('REQUEST POST todos');
-			const start = performance.now();
+			const start = Date.now();
 			const res = await fetch(`${baseApiUrl}api/todos`, {
 				method: 'POST',
 				body: JSON.stringify(todo),
@@ -41,7 +41,7 @@
 			if (!res.ok) throw `Status ${res.status} ${res.statusText}`;
 			const todoItem = await res.json();
 			todos.push(todoItem);
-			logRequest(`RESPONSE POST todos in ${performance.now() - start} ms`);
+			logRequest(`RESPONSE POST todos in ${Date.now() - start} ms`);
 		} catch (error) {
 			logRequest(`ERROR POST todos ${error}`);
 			console.error(error);
@@ -51,14 +51,14 @@
 	async function checkTodo(todo: Todo) {
 		try {
 			logRequest('REQUEST PATCH todo');
-			const start = performance.now();
+			const start = Date.now();
 			const res = await fetch(`${baseApiUrl}api/todo/${todo.id}?userId=${$userId}`, {
 				method: 'PATCH',
 				body: JSON.stringify({ checked: todo.checked }),
 				headers: jsonHeaders
 			});
 			if (!res.ok) throw `Status ${res.status} ${res.statusText}`;
-			logRequest(`RESPONSE PATCH todo in ${performance.now() - start} ms`);
+			logRequest(`RESPONSE PATCH todo in ${Date.now() - start} ms`);
 		} catch (error) {
 			logRequest(`ERROR PATCH todo ${error}`);
 			console.error(error);
@@ -68,14 +68,14 @@
 	async function deleteTodo(todo: Todo) {
 		try {
 			logRequest('REQUEST DELETE todos');
-			const start = performance.now();
+			const start = Date.now();
 			const res = await fetch(`${baseApiUrl}api/todo/${todo.id}?userId=${$userId}`, {
 				method: 'DELETE'
 			});
 			if (!res.ok) throw `Status ${res.status} ${res.statusText}`;
 			if (res.ok) {
 				todos = todos.filter((t) => t.id !== todo.id);
-				logRequest(`RESPONSE DELETE todo in ${performance.now() - start} ms`);
+				logRequest(`RESPONSE DELETE todo in ${Date.now() - start} ms`);
 			}
 		} catch (error) {
 			logRequest(`ERROR PATCH todo ${error}`);
