@@ -66,7 +66,7 @@ apiRouter.post("/todos", async (req, res) => {
 });
 
 apiRouter.patch("/todo/:id", async (req, res) => {
-    if (!req.body.checked) {
+    if (req.body.checked === undefined) {
         res.status(400).send("Missing checked in body");
         return;
     }

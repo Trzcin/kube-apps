@@ -28,10 +28,10 @@
 		todos.push(todoItem);
 	}
 
-	async function checkTodo(todo: Todo, checked: boolean) {
+	async function checkTodo(todo: Todo) {
 		await fetch(`${baseApiUrl}api/todo/${todo.id}`, {
 			method: 'PATCH',
-			body: JSON.stringify({ checked }),
+			body: JSON.stringify({ checked: todo.checked }),
 			headers: jsonHeaders
 		});
 	}
@@ -52,7 +52,7 @@
 				{todo}
 				oncheck={(v) => {
 					todo.checked = v;
-					checkTodo(todo, v);
+					checkTodo(todo);
 				}}
 				ondelete={() => deleteTodo(todo)}
 			/>
