@@ -20,7 +20,7 @@
 			logs.push({ date: new Date(), msg: 'Connecting to server' });
 		}
 
-		const ws = new WebSocket(`${baseApiUrl}api/ws`);
+		const ws = new WebSocket(`${baseApiUrl}api/ws/`);
 		ws.addEventListener('close', () => {
 			status = 'offline';
 			if (!lostConnection) {
