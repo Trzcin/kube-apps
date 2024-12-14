@@ -11,8 +11,8 @@ app.use((_, res, next) => {
 });
 
 const todos: Todo[] = [
-   { id: crypto.randomUUID(), text: "todo item 1" },
-   { id: crypto.randomUUID(), text: "todo item 2" }
+   { id: crypto.randomUUID(), userId: crypto.randomUUID(), content: "todo item 1" },
+   { id: crypto.randomUUID(), userId: crypto.randomUUID(), content: "todo item 2" }
 ];
 apiRouter.get("/todos", (_, res) => {
    res.json(todos); 

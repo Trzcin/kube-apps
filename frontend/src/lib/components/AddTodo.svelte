@@ -6,7 +6,7 @@
 		ev.preventDefault();
 		if (todoText.trim().length === 0) return;
 
-		onadd?.({ id: crypto.randomUUID(), text: todoText });
+		onadd?.({ id: crypto.randomUUID(), userId: crypto.randomUUID(), content: todoText });
 		todoText = '';
 	}
 </script>

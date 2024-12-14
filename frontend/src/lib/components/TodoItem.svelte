@@ -13,7 +13,7 @@
 		/>
 		<label
 			class="select-none text-lg {todo.checked && 'text-gray-400 line-through'}"
-			for="todo{todo.id}">{todo.text}</label
+			for="todo{todo.id}">{todo.content}</label
 		>
 	</div>
 </li>

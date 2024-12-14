@@ -1,5 +1,6 @@
 interface Todo {
     id: string;
-    text: string;
+    userId: string;
+    content: string;
     checked?: boolean;
 }
