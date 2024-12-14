@@ -29,7 +29,7 @@
 	}
 
 	async function checkTodo(todo: Todo) {
-		await fetch(`${baseApiUrl}api/todo/${todo.id}`, {
+		await fetch(`${baseApiUrl}api/todo/${todo.id}?userId=${$userId}`, {
 			method: 'PATCH',
 			body: JSON.stringify({ checked: todo.checked }),
 			headers: jsonHeaders
@@ -37,7 +37,9 @@
 	}
 
 	async function deleteTodo(todo: Todo) {
-		const res = await fetch(`${baseApiUrl}api/todo/${todo.id}`, { method: 'DELETE' });
+		const res = await fetch(`${baseApiUrl}api/todo/${todo.id}?userId=${$userId}`, {
+			method: 'DELETE'
+		});
 		if (res.ok) {
 			todos = todos.filter((t) => t.id !== todo.id);
 		}

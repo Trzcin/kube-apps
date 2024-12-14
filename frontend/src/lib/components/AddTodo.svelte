@@ -8,7 +8,9 @@
 		ev.preventDefault();
 		if (todoText.trim().length === 0) return;
 
-		onadd?.({ userId: $userId, content: todoText });
+		if ($userId) {
+			onadd?.({ userId: $userId, content: todoText });
+		}
 		todoText = '';
 	}
 </script>
