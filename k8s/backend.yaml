@@ -18,6 +18,9 @@ spec:
         - name: backend
           image: kubetest5:5000/kube-apps-backend
           imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: postgres-secret
           env:
             - name: PORT
               value: "80"
