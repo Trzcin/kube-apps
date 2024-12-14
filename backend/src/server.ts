@@ -18,16 +18,32 @@ app.use((_, res, next) => {
 app.use(express.json());
 
 // setup Postgres connection
-const db = new Client({
-    database: process.env.POSTGRES_DB,
-    user: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD,
-    port: 5432,
-    host: process.env.DB_HOST ?? "localhost",
-});
-await db.connect();
+let db: pg.Client | undefined;
+
+async function setupDB() {
+    const client = new Client({
+        database: process.env.POSTGRES_DB,
+        user: process.env.POSTGRES_USER,
+        password: process.env.POSTGRES_PASSWORD,
+        port: 5432,
+        host: process.env.DB_HOST ?? "localhost",
+    });
+    client.on("error", (err) => {
+        console.error(`PostgreSQL error: ${err}`);
+        db = undefined;
+        setTimeout(setupDB, 1000);
+    });
+    await client.connect();
+    db = client;
+}
+setupDB();
 
 apiRouter.get("/todos", async (req, res) => {
+    if (!db) {
+        res.status(500).send("Database unreachable");
+        return;
+    }
+
     const userId = req.query.userId;
     if (typeof userId !== "string") {
         res.status(400).send("Missing userId query param");
@@ -53,6 +69,11 @@ apiRouter.get("/todos", async (req, res) => {
 });
 
 apiRouter.post("/todos", async (req, res) => {
+    if (!db) {
+        res.status(500).send("Database unreachable");
+        return;
+    }
+
     if (!req.body.userId) {
         res.status(400).send("Missing userId in body");
         return;
@@ -78,6 +99,11 @@ apiRouter.post("/todos", async (req, res) => {
 });
 
 apiRouter.patch("/todo/:id", async (req, res) => {
+    if (!db) {
+        res.status(500).send("Database unreachable");
+        return;
+    }
+
     const userId = req.query.userId;
     if (typeof userId !== "string") {
         res.status(400).send("Missing userId query param");
@@ -105,6 +131,11 @@ apiRouter.patch("/todo/:id", async (req, res) => {
 });
 
 apiRouter.delete("/todo/:id", async (req, res) => {
+    if (!db) {
+        res.status(500).send("Database unreachable");
+        return;
+    }
+
     const userId = req.query.userId;
     if (typeof userId !== "string") {
         res.status(400).send("Missing userId query param");
