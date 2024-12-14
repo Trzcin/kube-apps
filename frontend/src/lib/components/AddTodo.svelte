@@ -1,12 +1,14 @@
 <script lang="ts">
-	let { onadd }: { onadd?: (todo: Todo) => void } = $props();
+	import { userId } from '$lib/store';
+
+	let { onadd }: { onadd?: (todo: TodoPost) => void } = $props();
 	let todoText = $state('');
 
 	function handleSubmit(ev: SubmitEvent) {
 		ev.preventDefault();
 		if (todoText.trim().length === 0) return;
 
-		onadd?.({ id: crypto.randomUUID(), userId: crypto.randomUUID(), content: todoText });
+		onadd?.({ userId: $userId, content: todoText });
 		todoText = '';
 	}
 </script>
