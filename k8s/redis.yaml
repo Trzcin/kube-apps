@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: redis
-          image: 'redis:7.4.1'
+          image: redis/redis-stack-server
           imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
