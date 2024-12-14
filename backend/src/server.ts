@@ -1,6 +1,7 @@
 import express, { Router } from "express";
 import expressWs from "express-ws";
-import { Client } from "pg";
+import pg from "pg";
+const { Client } = pg;
 
 const app = express();
 expressWs(app);
