@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { baseApiUrl } from '$lib/api';
 	import AddTodo from '$lib/components/AddTodo.svelte';
+	import ServerStatus from '$lib/components/ServerStatus.svelte';
 	import TodoItem from '$lib/components/TodoItem.svelte';
 	import { onMount } from 'svelte';
 
@@ -22,3 +23,4 @@
 		<AddTodo onadd={(todo) => todos.push(todo)} />
 	</div>
 </main>
+<ServerStatus />
