@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { baseApiUrl } from '$lib/api';
 	import { onMount } from 'svelte';
+	import Pill from './Pill.svelte';
 
 	const pingIntervalMs = 1000;
 	const reconnectTimeoutMs = 1000;
@@ -8,7 +9,6 @@
 	let status = $state<'connecting' | 'online' | 'offline'>('connecting');
 	let pingInterval = $state<number | undefined>();
 	let logs = $state<{ date: Date; msg: string }[]>([]);
-	let showLogs = $state(false);
 	let pongRecived = false;
 	let lostConnection = false;
 
@@ -60,10 +60,7 @@
 	onMount(openSocket);
 </script>
 
-<button
-	class="absolute bottom-4 left-1/2 flex max-h-60 -translate-x-1/2 flex-col items-center gap-2 overflow-auto rounded bg-gray-200 px-3 py-1 text-left shadow-md shadow-gray-300"
-	onclick={() => (showLogs = !showLogs)}
->
+{#snippet label()}
 	<div class="flex items-center gap-2">
 		<span
 			class="h-3 w-3 rounded-full"
@@ -81,15 +78,16 @@
 			{/if}
 		</p>
 	</div>
-	{#if showLogs}
-		<ul>
-			{#each logs as log}
-				<li class="flex items-center gap-2">
-					<span class="font-mono font-semibold">{log.date.toLocaleTimeString('pl-PL')}</span><span
-						>{log.msg}</span
-					>
-				</li>
-			{/each}
-		</ul>
-	{/if}
-</button>
+{/snippet}
+
+<Pill {label}>
+	<ul>
+		{#each logs as log}
+			<li class="flex items-center gap-2">
+				<span class="font-mono font-semibold">{log.date.toLocaleTimeString('pl-PL')}</span><span
+					>{log.msg}</span
+				>
+			</li>
+		{/each}
+	</ul>
+</Pill>
