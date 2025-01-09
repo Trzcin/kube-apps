@@ -22,7 +22,7 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - kubetest3
+          - kubetest2
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
