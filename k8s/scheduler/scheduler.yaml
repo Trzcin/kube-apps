@@ -44,12 +44,20 @@ spec:
           command:
             - /app/packetloss-scheduler
             - --config=/app/scheduler-config.yaml
+            - --kubeconfig=/app/config
           volumeMounts:
             - name: scheduler-config
               mountPath: /app/scheduler-config.yaml
+              readOnly: true
+            - name: kube-config
+              mountPath: /app/config
               readOnly: true
       volumes:
         - name: scheduler-config
           hostPath:
             path: /etc/kubernetes/scheduler-config.yaml
+            type: File
+        - name: kube-config
+          hostPath:
+            path: /home/adam/.kube/config
             type: File
