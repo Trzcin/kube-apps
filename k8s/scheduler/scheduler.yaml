@@ -29,20 +29,20 @@ spec:
   selector:
     matchLabels:
       app: packetloss-scheduler
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - kubetest2
   template:
     metadata:
       labels:
         app: packetloss-scheduler
     spec:
       serviceAccountName: packetloss-scheduler
+      nodeAffinity:
+        required:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: kubernetes.io/hostname
+                  operator: In
+                  values:
+                    - kubetest2
       containers:
         - name: scheduler
           image: kubetest5:5000/packetloss-scheduler
