@@ -45,7 +45,9 @@ spec:
           volumeMounts:
             - name: scheduler-config
               mountPath: /etc/kubernetes
+              readOnly: true
       volumes:
         - name: scheduler-config
           hostPath:
-            path: /etc/kubernetes
+            path: /etc/kubernetes/scheduler-config.yaml
+            type: File
