@@ -35,14 +35,8 @@ spec:
         app: packetloss-scheduler
     spec:
       serviceAccountName: packetloss-scheduler
-      nodeAffinity:
-        required:
-          nodeSelectorTerms:
-            - matchExpressions:
-                - key: kubernetes.io/hostname
-                  operator: In
-                  values:
-                    - kubetest2
+      nodeSelector:
+        kubernetes.io/hostname: kubetest2
       containers:
         - name: scheduler
           image: kubetest5:5000/packetloss-scheduler
