@@ -17,18 +17,30 @@ subjects:
     name: packetloss-scheduler
     namespace: kube-system
 ---
-kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
 metadata:
-  name: packetloss-scheduler-auth-rolebinding
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: extension-apiserver-authentication
+  name: custom-scheduler-role
+  namespace: kube-system
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get"]
+    resourceNames: ["extension-apiserver-authentication"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: custom-scheduler-rolebinding
+  namespace: kube-system
 subjects:
   - kind: ServiceAccount
     name: packetloss-scheduler
     namespace: kube-system
+roleRef:
+  kind: Role
+  name: custom-scheduler-role
+  apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: apps/v1
 kind: Deployment
