@@ -40,7 +40,7 @@ spec:
           image: kubetest5:5000/packetloss-scheduler
           imagePullPolicy: Always
           command:
-            - /packetloss-scheduler
+            - /app/packetloss-scheduler
             - --config=/etc/kubernetes/scheduler-config.yaml
           volumeMounts:
             - name: scheduler-config
