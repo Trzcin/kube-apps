@@ -41,10 +41,10 @@ spec:
           imagePullPolicy: Always
           command:
             - /app/packetloss-scheduler
-            - --config=/etc/kubernetes/scheduler-config.yaml
+            - --config=/app/scheduler-config.yaml
           volumeMounts:
             - name: scheduler-config
-              mountPath: /etc/kubernetes
+              mountPath: /app
               readOnly: true
       volumes:
         - name: scheduler-config
