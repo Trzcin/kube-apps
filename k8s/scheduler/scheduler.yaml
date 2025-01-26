@@ -46,7 +46,7 @@ spec:
             - --config=/app/scheduler-config.yaml
           volumeMounts:
             - name: scheduler-config
-              mountPath: /app
+              mountPath: /app/scheduler-config.yaml
               readOnly: true
       volumes:
         - name: scheduler-config
