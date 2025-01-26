@@ -15,6 +15,8 @@ import (
 )
 
 const PluginName = "PacketLossScheduler"
+const PacketLossCoeff = 10
+const DelayCoeff = 0.5
 
 type PacketLossPlugin struct {
 	handle framework.Handle
@@ -52,10 +54,25 @@ func (p *PacketLossPlugin) Score(ctx context.Context, state *framework.CycleStat
 		return 0, framework.NewStatus(framework.Error, fmt.Sprintf("invalid packet-loss value: %v", err))
 	}
 
+	delayLabel, exists := node.Labels["delay"]
+	if !exists {
+		// Assign a default score for nodes without delay information
+		klog.Infof("Pod: %v, Node: %v, no delay label, assigning max score", pod.Name, nodeName)
+		return 100, framework.NewStatus(framework.Success)
+	}
+
+	// Convert packet loss to a numeric value
+	delay, err := strconv.ParseFloat(delayLabel, 64)
+	if err != nil {
+		klog.Infof("Pod: %v, Node: %v, scoring failed", pod.Name, nodeName)
+		return 0, framework.NewStatus(framework.Error, fmt.Sprintf("invalid delay value: %v", err))
+	}
+
 	// Invert the packet loss to calculate the score (lower loss = higher score)
 	// Example: max score = 100, normalize the packet loss
 	const maxScore = 100
-	score := maxScore - int64(packetLoss*10) // Scale packet loss appropriately
+	score := maxScore - int64(packetLoss*PacketLossCoeff) // Scale packet loss appropriately
+	score -= int64(delay * DelayCoeff)
 	if score < 0 {
 		score = 0
 	}
