@@ -1,3 +1,22 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: packetloss-scheduler
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: packetloss-scheduler-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:kube-scheduler
+subjects:
+  - kind: ServiceAccount
+    name: packetloss-scheduler
+    namespace: kube-system
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,7 +34,7 @@ spec:
       labels:
         app: packetloss-scheduler
     spec:
-      serviceAccountName: system:kube-scheduler
+      serviceAccountName: packetloss-scheduler
       containers:
         - name: scheduler
           image: kubetest5:5000/packetloss-scheduler
