@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: packetloss-scheduler
+  namespace: kube-system
   labels:
     app: packetloss-scheduler
 spec:
