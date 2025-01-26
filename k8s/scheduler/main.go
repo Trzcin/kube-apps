@@ -59,6 +59,10 @@ func (p *PacketLossPlugin) Score(ctx context.Context, state *framework.CycleStat
 	return score, framework.NewStatus(framework.Success)
 }
 
+func (p *PacketLossPlugin) ScoreExtensions() framework.ScoreExtensions {
+	return nil
+}
+
 // Register the plugin
 func main() {
 	command := app.NewSchedulerCommand(
