@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: packetloss-scheduler
+  labels:
+    app: packetloss-scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: packetloss-scheduler
+  template:
+    metadata:
+      labels:
+        app: packetloss-scheduler
+    spec:
+      serviceAccountName: system:kube-scheduler
+      containers:
+        - name: scheduler
+          image: kubetest5:5000/packetloss-scheduler
+          imagePullPolicy: Always
+          command:
+            - /packetloss-scheduler
+            - --config=/etc/kubernetes/scheduler-config.yaml
+          volumeMounts:
+            - name: scheduler-config
+              mountPath: /etc/kubernetes
+      volumes:
+        - name: scheduler-config
+          hostPath:
+            path: /etc/kubernetes
