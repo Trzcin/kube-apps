@@ -69,7 +69,7 @@ spec:
           command:
             - /app/packetloss-scheduler
             - --config=/app/scheduler-config.yaml
-            - --kubeconfig=/app/config
+            - --master=http://localhost:6443
           volumeMounts:
             - name: scheduler-config
               mountPath: /app/scheduler-config.yaml
