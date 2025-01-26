@@ -24,7 +24,7 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: extension-apiserver-authentication-reader
+  name: extension-apiserver-authentication
 subjects:
   - kind: ServiceAccount
     name: packetloss-scheduler
