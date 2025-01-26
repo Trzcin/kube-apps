@@ -5,44 +5,26 @@ metadata:
   namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: packetloss-scheduler-clusterrole
+rules:
+  # Grant full access to all resources in all API groups
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: packetloss-scheduler-rolebinding
+  name: packetloss-scheduler-clusterrolebinding
+subjects:
+  - kind: ServiceAccount
+    name: packetloss-scheduler
+    namespace: kube-system
 roleRef:
-  apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: system:kube-scheduler
-subjects:
-  - kind: ServiceAccount
-    name: packetloss-scheduler
-    namespace: kube-system
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: custom-scheduler-role
-  namespace: kube-system
-rules:
-  - apiGroups: [""]
-    resources: ["configmaps"]
-    verbs: ["get", "list", "watch"]
-    resourceNames: ["extension-apiserver-authentication"]
-  - apiGroups: [""]
-    resources: ["services"]
-    verbs: ["get", "list", "watch"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: custom-scheduler-rolebinding
-  namespace: kube-system
-subjects:
-  - kind: ServiceAccount
-    name: packetloss-scheduler
-    namespace: kube-system
-roleRef:
-  kind: Role
-  name: custom-scheduler-role
+  name: packetloss-scheduler-clusterrole
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: apps/v1
