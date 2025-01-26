@@ -11,6 +11,7 @@ spec:
       labels:
         app: redis
     spec:
+      schedulerName: packetloss-scheduler
       containers:
         - name: redis
           image: redis/redis-stack-server
@@ -24,7 +25,6 @@ metadata:
     app: redis
 spec:
   ports:
-  - port: 6379
+    - port: 6379
   selector:
     app: redis
-

@@ -14,6 +14,7 @@ spec:
       labels:
         app: backend
     spec:
+      schedulerName: packetloss-scheduler
       containers:
         - name: backend
           image: kubetest5:5000/kube-apps-backend
