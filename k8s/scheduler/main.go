@@ -17,6 +17,8 @@ import (
 const PluginName = "PacketLossScheduler"
 const PacketLossCoeff = 10
 const DelayCoeff = 0.5
+const PacketLossThreshold = 3.0
+const DelayThreshold = 100.0
 
 type PacketLossPlugin struct {
 	handle framework.Handle
@@ -83,6 +85,38 @@ func (p *PacketLossPlugin) Score(ctx context.Context, state *framework.CycleStat
 
 func (p *PacketLossPlugin) ScoreExtensions() framework.ScoreExtensions {
 	return nil
+}
+
+func (p *PacketLossPlugin) Filter(ctx context.Context, cycleState *framework.CycleState, pod *v1.Pod, nodeInfo *framework.NodeInfo) *framework.Status {
+	if nodeInfo.Node() == nil {
+		return framework.NewStatus(framework.Error, "failed to get node info")
+	}
+
+	node := nodeInfo.Node()
+
+	packetLossLabel, exists := node.Labels["packet-loss"]
+	if !exists {
+		return framework.NewStatus(framework.Success)
+	}
+	packetLoss, err := strconv.ParseFloat(packetLossLabel, 64)
+	if err != nil {
+		return framework.NewStatus(framework.Error, fmt.Sprintf("invalid packet-loss value: %v", err))
+	}
+
+	delayLabel, exists := node.Labels["delay"]
+	if !exists {
+		return framework.NewStatus(framework.Success)
+	}
+	delay, err := strconv.ParseFloat(delayLabel, 64)
+	if err != nil {
+		return framework.NewStatus(framework.Error, fmt.Sprintf("invalid delay value: %v", err))
+	}
+
+	if packetLoss > PacketLossThreshold || delay > DelayThreshold {
+		return framework.NewStatus(framework.Unschedulable)
+	} else {
+		return framework.NewStatus(framework.Success)
+	}
 }
 
 // Register the plugin
