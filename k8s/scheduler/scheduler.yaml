@@ -54,13 +54,14 @@ spec:
           command:
             - /app/packetloss-scheduler
             - --config=/app/scheduler-config.yaml
-            - --master=http://kubetest2.adam.bucior.pl:6443
+            - --kubeconfig=/app/admin.conf
           volumeMounts:
             - name: scheduler-config
               mountPath: /app/scheduler-config.yaml
               readOnly: true
             - name: kube-config
-              mountPath: /app/config
+              mountPath: /app/admin.conf
+              readOnly: true
       volumes:
         - name: scheduler-config
           hostPath:
@@ -68,5 +69,5 @@ spec:
             type: File
         - name: kube-config
           hostPath:
-            path: /home/adam/.kube/config
+            path: /etc/kubernetes/admin.conf
             type: File
