@@ -53,8 +53,9 @@ spec:
           imagePullPolicy: Always
           command:
             - /app/packetloss-scheduler
-            - --config=/app/scheduler-config.yaml
-            - --kubeconfig=/app/admin.conf
+            - "--config=/app/scheduler-config.yaml"
+            - "--kubeconfig=/app/admin.conf"
+            - "--v=4"
           volumeMounts:
             - name: scheduler-config
               mountPath: /app/scheduler-config.yaml

@@ -9,6 +9,7 @@ import (
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/component-base/cli"
+	"k8s.io/klog/v2"
 	"k8s.io/kubernetes/cmd/kube-scheduler/app"
 	"k8s.io/kubernetes/pkg/scheduler/framework"
 )
@@ -31,6 +32,7 @@ func (p *PacketLossPlugin) Name() string {
 func (p *PacketLossPlugin) Score(ctx context.Context, state *framework.CycleState, pod *v1.Pod, nodeName string) (int64, *framework.Status) {
 	nodeInfo, err := p.handle.SnapshotSharedLister().NodeInfos().Get(nodeName)
 	if err != nil {
+		klog.Infof("Pod: %v, Node: %v, scoring failed", pod.Name, nodeName)
 		return 0, framework.NewStatus(framework.Error, fmt.Sprintf("failed to get node info: %v", err))
 	}
 
@@ -39,12 +41,14 @@ func (p *PacketLossPlugin) Score(ctx context.Context, state *framework.CycleStat
 	packetLossLabel, exists := node.Labels["packet-loss"]
 	if !exists {
 		// Assign a default score for nodes without packet loss information
+		klog.Infof("Pod: %v, Node: %v, no packet-loss label, assigning max score", pod.Name, nodeName)
 		return 100, framework.NewStatus(framework.Success)
 	}
 
 	// Convert packet loss to a numeric value
 	packetLoss, err := strconv.ParseFloat(packetLossLabel, 64)
 	if err != nil {
+		klog.Infof("Pod: %v, Node: %v, scoring failed", pod.Name, nodeName)
 		return 0, framework.NewStatus(framework.Error, fmt.Sprintf("invalid packet-loss value: %v", err))
 	}
 
@@ -56,6 +60,7 @@ func (p *PacketLossPlugin) Score(ctx context.Context, state *framework.CycleStat
 		score = 0
 	}
 
+	klog.Infof("Pod: %v, Node: %v, assigning score: %v", pod.Name, nodeName, score)
 	return score, framework.NewStatus(framework.Success)
 }
 
