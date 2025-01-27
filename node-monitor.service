@@ -1,0 +1,9 @@
+[Unit]
+Description=Monitor k8s nodes for packet loss
+
+[Service]
+ExecStart=/usr/bin/python3 /home/adam/node-monitor.py
+Environment="KUBECONFIG=/home/adam/.kube/config"
+
+[Install]
+WantedBy=multi-user.target
