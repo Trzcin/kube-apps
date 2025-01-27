@@ -1,0 +1,11 @@
+apiVersion: kubescheduler.config.k8s.io/v1
+kind: KubeSchedulerConfiguration
+profiles:
+  - schedulerName: packetloss-scheduler
+    plugins:
+      score:
+        enabled:
+          - name: PacketLossScheduler
+      filter:
+        enabled:
+          - name: PacketLossScheduler
