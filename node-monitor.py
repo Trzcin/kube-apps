@@ -1,6 +1,4 @@
 import asyncio
-import json
-import time
 from kubernetes import client, config
 
 # Configuration
@@ -15,10 +13,12 @@ PACKET_LOSS_THRESHOLD = 3
 
 POD_NAMESPACE = "default"
 
+
 def get_nodes():
     """Fetch the list of nodes in the cluster."""
     v1 = client.CoreV1Api()
     return v1.list_node().items
+
 
 async def ping_node(node_ip):
     """
@@ -26,7 +26,7 @@ async def ping_node(node_ip):
     Returns the packet loss percentage (e.g., 5.0 for 5% loss).
     """
     try:
-	# Run the ping command
+        # Run the ping command
         process = await asyncio.create_subprocess_exec("ping", "-c", str(PING_COUNT), "-i", str(MONITOR_INTERVAL / PING_COUNT), "-W", str(PING_TIMEOUT), node_ip, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
 
         (stdout_data, stderr_data) = await process.communicate()
@@ -38,16 +38,19 @@ async def ping_node(node_ip):
         for line in stdout_data.decode("utf-8").splitlines():
             if "time=" in line:
                 received += 1
-                time_sum += float(line.split("time=")[1].split("ms")[0].strip())
+                time_sum += float(line.split("time=")
+                                  [1].split("ms")[0].strip())
 
             if "packet loss" in line:
-                loss_percentage = float(line.split(",")[2].split("%")[0].strip())
+                loss_percentage = float(
+                    line.split(",")[2].split("%")[0].strip())
                 return loss_percentage, time_sum / received
     except Exception as e:
         print(f"Error pinging {node_ip}: {e}")
-        return 100.0, 0.0 # Default to 100% loss if an error occurs
+        return 100.0, 0.0  # Default to 100% loss if an error occurs
 
     return 100.0, 0.0  # Default to 100% loss if parsing fails
+
 
 def update_node_label(node_name, packet_loss, delay):
     """
@@ -64,9 +67,11 @@ def update_node_label(node_name, packet_loss, delay):
     }
     try:
         v1.patch_node(node_name, body)
-        print(f"Updated node {node_name} with {PACKET_LOSS_KEY}={packet_loss:.1f} {DELAY_KEY}={delay:.1f}")
+        print(f"Updated node {node_name} with {PACKET_LOSS_KEY}={
+              packet_loss:.1f} {DELAY_KEY}={delay:.1f}")
     except client.exceptions.ApiException as e:
         print(f"Failed to update node {node_name}: {e}")
+
 
 async def monitor_node(node):
     node_name = node.metadata.name
@@ -97,6 +102,7 @@ async def monitor_node(node):
                 pod_name = pod.metadata.name
                 print(f"Deleting pod {pod_name} from node {node_name}")
                 v1.delete_namespaced_pod(pod_name, POD_NAMESPACE)
+
 
 async def monitor_nodes():
     """
