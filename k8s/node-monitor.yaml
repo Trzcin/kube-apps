@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kube-node-monitor
+  labels:
+    app: node-monitor
+spec:
+  selector:
+    matchLabels:
+      app: node-monitor
+  template:
+    metadata:
+      labels:
+        app: node-monitor
+    spec:
+      containers:
+        - name: node-monitor
+          image: kubetest5:5000/kube-node-monitor
+          imagePullPolicy: Always
+      # terminate instantly
+      terminationGracePeriodSeconds: 0
