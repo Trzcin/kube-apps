@@ -22,6 +22,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: "spec.nodeName"
+            - name: DELAY_THRESHOLD_MS
+              value: "100"
+            - name: PACKET_LOSS_THRESHOLD
+              value: "3"
       tolerations:
         - key: "kubetest-unavailable"
           operator: "Exists"

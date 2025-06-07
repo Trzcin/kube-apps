@@ -8,8 +8,8 @@ PING_TIMEOUT = 1  # Timeout in seconds for each ping
 LABEL = 'kubetest-available'
 MONITOR_INTERVAL = 5  # Interval (in seconds) between checks
 
-DELAY_THRESHOLD = 100
-PACKET_LOSS_THRESHOLD = 3
+DELAY_THRESHOLD_MS = int(environ["DELAY_THRESHOLD_MS"])
+PACKET_LOSS_THRESHOLD = int(environ["PACKET_LOSS_THRESHOLD"])
 
 POD_NAMESPACE = "default"
 
@@ -126,7 +126,7 @@ async def monitor_node(node: client.V1Node, current_node_name: str):
     # Measure packet loss
     packet_loss, delay = await ping_node(internal_ip)
 
-    if delay > DELAY_THRESHOLD or packet_loss > PACKET_LOSS_THRESHOLD:
+    if delay > DELAY_THRESHOLD_MS or packet_loss > PACKET_LOSS_THRESHOLD:
         print(f"Node {node_name} reached delay or packet-loss threshold")
 
         # Update the node's label
