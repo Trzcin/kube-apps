@@ -13,6 +13,7 @@ DELAY_THRESHOLD = 100
 PACKET_LOSS_THRESHOLD = 3
 
 POD_NAMESPACE = "default"
+NODE_NAME_PREFIX = "kubetest"
 
 
 def get_nodes() -> list[client.V1Node]:
@@ -58,16 +59,18 @@ async def ping_node(node_ip: str):
     return 100.0, 0.0  # Default to 100% loss if parsing fails
 
 
-def update_node_label(node_name: str, packet_loss: float, delay: float):
-    """
-    Update the `packet-loss` and `delay` labels on a node.
-    """
+def update_node_label(node_name: str, current_node_name: str, packet_loss: float, delay: float):
+    """Update the `packet-loss` and `delay` labels on a node."""
+
     v1 = client.CoreV1Api()
+    node_packet_loss_key = f"{PACKET_LOSS_KEY}-{current_node_name}"
+    node_delay_key = f"{DELAY_KEY}-{current_node_name}"
+
     body = {
         "metadata": {
             "labels": {
-                PACKET_LOSS_KEY: f"{packet_loss:.1f}",
-                DELAY_KEY: f"{delay:.1f}"
+                node_packet_loss_key: f"{packet_loss:.1f}",
+                node_delay_key: f"{delay:.1f}"
             }
         }
     }
@@ -79,7 +82,7 @@ def update_node_label(node_name: str, packet_loss: float, delay: float):
         print(f"Failed to update node {node_name}: {e}")
 
 
-async def monitor_node(node: client.V1Node):
+async def monitor_node(node: client.V1Node, current_node_name: str):
     node_name: str = node.metadata.name
     # Fetch the node's internal IP
     internal_ip: str | None = None
@@ -95,7 +98,7 @@ async def monitor_node(node: client.V1Node):
     # Measure packet loss
     packet_loss, delay = await ping_node(internal_ip)
     # Update the node's label
-    update_node_label(node_name, packet_loss, delay)
+    update_node_label(node_name, current_node_name, packet_loss, delay)
 
     if delay > DELAY_THRESHOLD or packet_loss > PACKET_LOSS_THRESHOLD:
         print(f"Node {node_name} reached delay or packet-loss threshold")
@@ -116,10 +119,9 @@ async def monitor_nodes():
     """
     print("Starting packet loss monitoring...")
     while True:
-        running_node_name = get_current_node_name()
-        print(running_node_name)
-        nodes = filter(lambda n: n.metadata.name != running_node_name, get_nodes())
-        await asyncio.gather(*[monitor_node(node) for node in nodes])
+        current_node_name = get_current_node_name()
+        nodes = filter(lambda n: n.metadata.name != current_node_name, get_nodes())
+        await asyncio.gather(*[monitor_node(node, current_node_name) for node in nodes])
 
 if __name__ == "__main__":
     # Load Kubernetes configuration
