@@ -22,5 +22,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: "spec.nodeName"
-      # terminate instantly
-      terminationGracePeriodSeconds: 0
+      tolerations:
+        - key: "kubetest-unavailable"
+          operator: "Exists"
