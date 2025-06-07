@@ -5,8 +5,7 @@ from os import environ
 # Configuration
 PING_COUNT = 500  # Number of ping packets to send
 PING_TIMEOUT = 1  # Timeout in seconds for each ping
-PACKET_LOSS_KEY = "packet-loss"
-DELAY_KEY = "delay"
+LABEL = 'kubetest-available'
 MONITOR_INTERVAL = 5  # Interval (in seconds) between checks
 
 DELAY_THRESHOLD = 100
@@ -58,25 +57,22 @@ async def ping_node(node_ip: str):
     return 100.0, 0.0  # Default to 100% loss if parsing fails
 
 
-def update_node_label(node_name: str, current_node_name: str, packet_loss: float, delay: float):
-    """Update the `packet-loss` and `delay` labels on a node."""
+def update_node_label(node_name: str, current_node_name: str, available: bool):
+    """Update the `kubetest-available` label on a node."""
 
     v1 = client.CoreV1Api()
-    node_packet_loss_key = f"{PACKET_LOSS_KEY}-{current_node_name}"
-    node_delay_key = f"{DELAY_KEY}-{current_node_name}"
+    node_available_label = f"{LABEL}-{current_node_name}"
 
     body = {
         "metadata": {
             "labels": {
-                node_packet_loss_key: f"{packet_loss:.1f}",
-                node_delay_key: f"{delay:.1f}"
+                node_available_label: str(available)
             }
         }
     }
     try:
         v1.patch_node(node_name, body)
-        print(f"Updated node {node_name} with {PACKET_LOSS_KEY}={
-              packet_loss:.1f} {DELAY_KEY}={delay:.1f}")
+        print(f"Updated node {node_name} with {node_available_label}={available}")
     except client.exceptions.ApiException as e:
         print(f"Failed to update node {node_name}: {e}")
 
@@ -129,15 +125,14 @@ async def monitor_node(node: client.V1Node, current_node_name: str):
 
     # Measure packet loss
     packet_loss, delay = await ping_node(internal_ip)
-    # Update the node's label
-    update_node_label(node_name, current_node_name, packet_loss, delay)
 
     if delay > DELAY_THRESHOLD or packet_loss > PACKET_LOSS_THRESHOLD:
         print(f"Node {node_name} reached delay or packet-loss threshold")
 
-        taint_node_no_execute(node_name, True)
+        # Update the node's label
+        update_node_label(node_name, current_node_name, available=False)
     else:
-        taint_node_no_execute(node_name, False)
+        update_node_label(node_name, current_node_name, available=True)
 
 
 async def monitor_nodes():
