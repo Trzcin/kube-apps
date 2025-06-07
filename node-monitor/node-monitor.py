@@ -81,6 +81,39 @@ def update_node_label(node_name: str, current_node_name: str, packet_loss: float
         print(f"Failed to update node {node_name}: {e}")
 
 
+def taint_node_no_execute(node_name: str, noExecute: bool):
+    """Update taints on node."""
+
+    v1 = client.CoreV1Api()
+
+    taints = []
+
+    if noExecute:
+        taints.append(client.V1Taint(
+            key="kubetest-unavailable",
+            value=None,
+            effect="NoExecute"
+        ))
+
+    body = {
+        "spec": {
+            "taints": [t.to_dict() for t in taints]
+        }
+    }
+
+    try:
+        v1.patch_node(node_name, body)
+        if noExecute:
+            print(f"Added NoExecute taint to node {node_name}")
+        else:
+            print(f"Removed NoExecute taint from node {node_name}")
+    except client.exceptions.ApiException as e:
+        if noExecute:
+            print(f"Failed to add NoExecute taint to node {node_name}: {e}")
+        else:
+            print(f"Failed to remove NoExecute taint from node {node_name}: {e}")
+
+
 async def monitor_node(node: client.V1Node, current_node_name: str):
     node_name: str = node.metadata.name
     # Fetch the node's internal IP
@@ -101,15 +134,10 @@ async def monitor_node(node: client.V1Node, current_node_name: str):
 
     if delay > DELAY_THRESHOLD or packet_loss > PACKET_LOSS_THRESHOLD:
         print(f"Node {node_name} reached delay or packet-loss threshold")
-        v1 = client.CoreV1Api()
 
-        pods = v1.list_namespaced_pod(POD_NAMESPACE).items
-
-        for pod in pods:
-            if pod.spec.node_name == node_name:
-                pod_name = pod.metadata.name
-                print(f"Deleting pod {pod_name} from node {node_name}")
-                v1.delete_namespaced_pod(pod_name, POD_NAMESPACE)
+        taint_node_no_execute(node_name, True)
+    else:
+        taint_node_no_execute(node_name, False)
 
 
 async def monitor_nodes():
