@@ -1,5 +1,6 @@
 import asyncio
 from kubernetes import client, config
+from os import environ
 
 # Configuration
 PING_COUNT = 500  # Number of ping packets to send
@@ -18,6 +19,11 @@ def get_nodes() -> list[client.V1Node]:
     """Fetch the list of nodes in the cluster."""
     v1 = client.CoreV1Api()
     return v1.list_node().items
+
+
+def get_current_node_name() -> str:
+    """Get the the name of the node this script is running on"""
+    return environ["K8S_NODE"]
 
 
 async def ping_node(node_ip: str):
@@ -110,7 +116,9 @@ async def monitor_nodes():
     """
     print("Starting packet loss monitoring...")
     while True:
-        nodes = get_nodes()
+        running_node_name = get_current_node_name()
+        print(running_node_name)
+        nodes = filter(lambda n: n.metadata.name != running_node_name, get_nodes())
         await asyncio.gather(*[monitor_node(node) for node in nodes])
 
 if __name__ == "__main__":

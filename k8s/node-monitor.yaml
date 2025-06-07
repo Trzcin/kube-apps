@@ -17,5 +17,10 @@ spec:
         - name: node-monitor
           image: kubetest5:5000/kube-node-monitor
           imagePullPolicy: Always
+          env:
+            - name: K8S_NODE
+              valueFrom:
+                fieldRef:
+                  fieldPath: "spec.nodeName"
       # terminate instantly
       terminationGracePeriodSeconds: 0
