@@ -14,13 +14,13 @@ PACKET_LOSS_THRESHOLD = 3
 POD_NAMESPACE = "default"
 
 
-def get_nodes():
+def get_nodes() -> list[client.V1Node]:
     """Fetch the list of nodes in the cluster."""
     v1 = client.CoreV1Api()
     return v1.list_node().items
 
 
-async def ping_node(node_ip):
+async def ping_node(node_ip: str):
     """
     Measure packet loss to a node using the `ping` command.
     Returns the packet loss percentage (e.g., 5.0 for 5% loss).
@@ -52,9 +52,9 @@ async def ping_node(node_ip):
     return 100.0, 0.0  # Default to 100% loss if parsing fails
 
 
-def update_node_label(node_name, packet_loss, delay):
+def update_node_label(node_name: str, packet_loss: float, delay: float):
     """
-    Update the `packet-loss` label on a node.
+    Update the `packet-loss` and `delay` labels on a node.
     """
     v1 = client.CoreV1Api()
     body = {
@@ -73,10 +73,10 @@ def update_node_label(node_name, packet_loss, delay):
         print(f"Failed to update node {node_name}: {e}")
 
 
-async def monitor_node(node):
-    node_name = node.metadata.name
+async def monitor_node(node: client.V1Node):
+    node_name: str = node.metadata.name
     # Fetch the node's internal IP
-    internal_ip = None
+    internal_ip: str | None = None
     for address in node.status.addresses:
         if address.type == "InternalIP":
             internal_ip = address.address
