@@ -11,7 +11,6 @@ spec:
       labels:
         app: redis
     spec:
-      schedulerName: packetloss-scheduler
       containers:
         - name: redis
           image: redis/redis-stack-server
