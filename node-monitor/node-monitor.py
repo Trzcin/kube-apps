@@ -13,7 +13,6 @@ DELAY_THRESHOLD = 100
 PACKET_LOSS_THRESHOLD = 3
 
 POD_NAMESPACE = "default"
-NODE_NAME_PREFIX = "kubetest"
 
 
 def get_nodes() -> list[client.V1Node]:
