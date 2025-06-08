@@ -193,3 +193,4 @@ if __name__ == "__main__":
 
     print("Running monitoring...")
     asyncio.run(monitor_nodes())
+    asyncio.run(monitor_node_graph())
