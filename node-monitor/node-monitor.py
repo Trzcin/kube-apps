@@ -191,13 +191,17 @@ async def monitor_node_graph():
         await asyncio.sleep(random.uniform(4, 6))
 
 
+async def main():
+    print("Running monitoring...")
+    await asyncio.gather(
+        monitor_nodes(),
+        monitor_node_graph()
+    )
+
+
 if __name__ == "__main__":
     # Load Kubernetes configuration
     print("Loading cluster config...")
     config.load_incluster_config()  # Assumes the script runs on the control plane
 
-    print("Running monitoring...")
-    asyncio.run(asyncio.gather(
-        monitor_nodes(),
-        monitor_node_graph()
-    ))
+    asyncio.run(main())
