@@ -187,6 +187,6 @@ async def monitor_node_graph():
 
 if __name__ == "__main__":
     # Load Kubernetes configuration
-    config.load_kube_config()  # Assumes the script runs on the control plane
+    config.load_incluster_config()  # Assumes the script runs on the control plane
 
     asyncio.run(monitor_nodes())
