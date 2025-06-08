@@ -1,4 +1,5 @@
 import asyncio
+import random
 from kubernetes import client, config
 from os import environ
 
@@ -137,13 +138,52 @@ async def monitor_node(node: client.V1Node, current_node_name: str):
 
 async def monitor_nodes():
     """
-    Monitor all nodes in the cluster and update their packet loss labels.
+    Monitor all nodes in the cluster and update their labels.
     """
     print("Starting packet loss monitoring...")
     while True:
         current_node_name = get_current_node_name()
         nodes = filter(lambda n: n.metadata.name != current_node_name, get_nodes())
         await asyncio.gather(*[monitor_node(node, current_node_name) for node in nodes])
+
+
+def bron_kerbosh_algorithm(R: set[int], P: set[int], X: set[int], graph: dict[int, list[int]]):
+    if not P and not X:
+        yield R
+
+    while P:
+        v = P.pop()
+        yield from bron_kerbosh_algorithm(
+            R.union({v}),
+            P.intersection(graph[v]),
+            P.intersection(graph[v]),
+            graph
+        )
+        X.add(v)
+
+async def monitor_node_graph():
+    await asyncio.sleep(random.uniform(1, 6))
+    while True:
+        nodes = get_nodes()
+        nodes.sort(key=lambda node: node.metadata.name)
+
+        graph = {i: set() for i in range(len(nodes))}
+        for i in range(len(nodes)):
+            node_i_name = nodes[i].metadata.name
+            for j in range(len(nodes)):
+                if nodes[j].metadata.labels[f"{LABEL}-{node_i_name}"] == 'True':
+                    graph[i].add(j)
+
+        cliques = list(bron_kerbosh_algorithm(set(), set(), set(), graph))
+
+        max_clique = max(cliques, key=lambda c: len(c), default=None)
+
+        if max_clique:
+            for i in range(len(nodes)):
+                taint_node_no_execute(nodes[i].metadata.name, i not in max_clique)
+
+        await asyncio.sleep(random.uniform(4, 6))
+
 
 if __name__ == "__main__":
     # Load Kubernetes configuration
