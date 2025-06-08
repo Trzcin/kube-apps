@@ -174,7 +174,7 @@ async def monitor_node_graph():
         for i in range(len(nodes)):
             node_i_name = nodes[i].metadata.name
             for j in range(len(nodes)):
-                if nodes[j].metadata.labels[f"{LABEL}-{node_i_name}"] == 'True':
+                if nodes[j].metadata.labels.get(f"{LABEL}-{node_i_name}", None) == 'True':
                     graph[i].add(j)
 
         cliques = list(bron_kerbosh_algorithm(set(), set(), set(), graph))
