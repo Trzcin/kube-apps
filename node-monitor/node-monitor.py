@@ -126,6 +126,7 @@ async def monitor_node(node: client.V1Node, current_node_name: str):
 
     # Measure packet loss
     packet_loss, delay = await ping_node(internal_ip)
+    print(f"Pinged node {node_name}({internal_ip}): packet_loss={packet_loss} delay={delay}")
 
     if delay > DELAY_THRESHOLD_MS or packet_loss > PACKET_LOSS_THRESHOLD:
         print(f"Node {node_name} reached delay or packet-loss threshold")
