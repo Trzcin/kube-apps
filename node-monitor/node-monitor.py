@@ -178,7 +178,7 @@ async def monitor_node_graph():
                     graph[i].add(j)
 
         print(f"Getting cliques for graph: {graph}")
-        cliques = list(bron_kerbosh_algorithm(set(), set(), set(), graph))
+        cliques = list(bron_kerbosh_algorithm(set(), set(graph.keys()), set(), graph))
         print(f"Got cliques: {cliques}")
 
         max_clique = max(cliques, key=lambda c: len(c), default=None)
