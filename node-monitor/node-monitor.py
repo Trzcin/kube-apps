@@ -197,5 +197,7 @@ if __name__ == "__main__":
     config.load_incluster_config()  # Assumes the script runs on the control plane
 
     print("Running monitoring...")
-    asyncio.run(monitor_nodes())
-    asyncio.run(monitor_node_graph())
+    asyncio.run(asyncio.gather(
+        monitor_nodes(),
+        monitor_node_graph()
+    ))
