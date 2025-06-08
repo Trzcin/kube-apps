@@ -144,6 +144,7 @@ async def monitor_nodes():
     print("Starting packet loss monitoring...")
     while True:
         current_node_name = get_current_node_name()
+        print("Getting a list of all nodes...")
         nodes = filter(lambda n: n.metadata.name != current_node_name, get_nodes())
         await asyncio.gather(*[monitor_node(node, current_node_name) for node in nodes])
 
