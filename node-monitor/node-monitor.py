@@ -50,7 +50,7 @@ async def ping_node(node_ip: str):
             if "packet loss" in line:
                 loss_percentage = float(
                     line.split(",")[2].split("%")[0].strip())
-                return loss_percentage, time_sum / received
+                return loss_percentage, time_sum / received if received > 0 else 0.0
     except Exception as e:
         print(f"Error pinging {node_ip}: {e}")
         return 100.0, 0.0  # Default to 100% loss if an error occurs
