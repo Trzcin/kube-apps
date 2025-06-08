@@ -1,3 +1,32 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: node-monitor-account
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: node-monitor-clusterrole
+rules:
+  # Grant full access to all resources in all API groups
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: node-monitor-clusterrolebinding
+subjects:
+  - kind: ServiceAccount
+    name: node-monitor-account
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: node-monitor-clusterrole
+  apiGroup: rbac.authorization.k8s.io
+---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -13,6 +42,7 @@ spec:
       labels:
         app: node-monitor
     spec:
+      serviceAccountName: node-monitor-account
       containers:
         - name: node-monitor
           image: kubetest5:5000/kube-node-monitor
