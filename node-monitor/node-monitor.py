@@ -166,6 +166,7 @@ def bron_kerbosh_algorithm(R: set[int], P: set[int], X: set[int], graph: dict[in
 async def monitor_node_graph():
     await asyncio.sleep(random.uniform(1, 6))
     while True:
+        print("Checking node graph...")
         nodes = get_nodes()
         nodes.sort(key=lambda node: node.metadata.name)
 
@@ -181,8 +182,11 @@ async def monitor_node_graph():
         max_clique = max(cliques, key=lambda c: len(c), default=None)
 
         if max_clique:
+            print(f"Max clique: {map(lambda i: nodes[i].metadata.name, max_clique)}")
             for i in range(len(nodes)):
                 taint_node_no_execute(nodes[i].metadata.name, i not in max_clique)
+        else:
+            print("Max clique not found")
 
         await asyncio.sleep(random.uniform(4, 6))
 
